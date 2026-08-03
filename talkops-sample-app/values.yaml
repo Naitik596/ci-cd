@@ -34,7 +34,7 @@ securityContext:
      - ALL
    readOnlyRootFilesystem: false
    runAsNonRoot: false
-   runAsUser: 1000
+   runAsUser: 0
 
 service:
   type: LoadBalancer
