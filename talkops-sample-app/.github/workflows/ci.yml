@@ -1,0 +1,21 @@
+name: CI for ci-cd
+'on':
+  push:
+    branches:
+    - main
+permissions:
+  contents: read
+  packages: write
+jobs:
+  placeholder-job:
+    name: Placeholder Job
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v4
+    - name: Placeholder Step
+      id: placeholder-step
+      run: echo "No capabilities were defined in the input. This is a placeholder
+        job."
