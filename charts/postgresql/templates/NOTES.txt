@@ -1,0 +1,11 @@
+1. Get the PostgreSQL password:
+
+   export POSTGRES_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "postgresql.fullname" . }} -o jsonpath="{.data.password}" | base64 -d)
+
+2. Connect to PostgreSQL:
+
+   kubectl run {{ include "postgresql.fullname" . }}-client --rm -i --restart='Never' --namespace {{ .Release.Namespace }} --image {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }} --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql --host {{ include "postgresql.fullname" . }} -U postgres -d postgres -p {{ .Values.service.port }}
+
+To uninstall the chart:
+
+  helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
