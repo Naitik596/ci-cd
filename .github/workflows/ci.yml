@@ -1,17 +1,17 @@
-name: CI Workflow
+name: ci-cd
 'on':
   push:
     branches:
     - main
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 permissions:
   contents: read
   packages: write
 jobs:
-  build:
+  validate-code:
+    name: 'Validate: Code Quality'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - run: echo "Hello, world!"
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v4
