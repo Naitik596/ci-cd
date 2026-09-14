@@ -1,0 +1,72 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+namespace: ""
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+configMap:
+  enabled: true
+  data:
+    app.conf: |
+      server {
+        listen 80;
+        location / {
+          root /usr/share/nginx/html;
+        }
+      }
+
+secret:
+  enabled: true
+  apiKey: "your-api-key-here"
+
+volumeMounts:
+  - name: config-volume
+    mountPath: /etc/nginx/conf.d
+    readOnly: true
+  - name: secret-volume
+    mountPath: /etc/secrets
+    readOnly: true
