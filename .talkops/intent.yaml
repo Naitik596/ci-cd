@@ -1,0 +1,54 @@
+schema_version: '1.0'
+name: Node.js CI
+metadata:
+  project_type: service
+  owner: unknown-team
+  reconciliation_mode: strict
+runtime:
+  language: nodejs
+  version: 20.x
+  package_manager: npm
+triggers:
+- event: push
+  branches:
+  - main
+- event: pull_request
+stages:
+- id: test-unit-test
+  name: 'Test: unit-test'
+  needs: []
+  timeout_minutes: 30
+  enforcement: mandatory
+  thresholds: {}
+  setup:
+  - type: checkout
+    runtime: null
+    version: null
+    tool: null
+    command: null
+  - type: runtime_setup
+    runtime: node
+    version: ${{ env.NODE_VERSION }}
+    tool: null
+    command: null
+  tasks:
+  - id: install
+    name: Install dependencies
+    capability: custom
+    tool: npm
+    tool_version: null
+    command: npm ci
+    config: {}
+    env: {}
+    fail_on_error: true
+  - id: test
+    name: Run unit tests
+    capability: unit-test
+    tool: npm
+    tool_version: null
+    command: npm test
+    config: {}
+    env: {}
+    fail_on_error: true
+  services: []
+docker: null
