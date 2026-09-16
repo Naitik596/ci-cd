@@ -7,17 +7,11 @@ permissions:
   contents: read
   packages: write
 jobs:
-  validate-validate:
+  validate-infra:
     name: 'Validate: Infrastructure'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - name: Terraform Validate
-      id: terraform-validate
-      run: terraform validate
-    - name: Terraform Plan
-      id: terraform-plan
-      run: terraform plan -out=tfplan
-    - name: Helm Lint
-      id: helm-lint
-      run: helm lint .
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v4

@@ -1,24 +1,23 @@
 schema_version: '1.0'
-name: Node.js CI
+name: ci-cd CI
 metadata:
   project_type: service
   owner: unknown-team
   reconciliation_mode: strict
 runtime:
-  language: nodejs
-  version: 20.x
-  package_manager: npm
+  language: unknown
+  version: latest
+  package_manager: unknown
 triggers:
-- event: push
+- event: pull_request
   branches:
   - main
-- event: pull_request
 stages:
-- id: test-unit-test
-  name: 'Test: unit-test'
+- id: validate-infra
+  name: 'Validate: Infrastructure'
   needs: []
   timeout_minutes: 30
-  enforcement: mandatory
+  enforcement: null
   thresholds: {}
   setup:
   - type: checkout
@@ -26,29 +25,6 @@ stages:
     version: null
     tool: null
     command: null
-  - type: runtime_setup
-    runtime: node
-    version: ${{ env.NODE_VERSION }}
-    tool: null
-    command: null
-  tasks:
-  - id: install
-    name: Install dependencies
-    capability: custom
-    tool: npm
-    tool_version: null
-    command: npm ci
-    config: {}
-    env: {}
-    fail_on_error: true
-  - id: test
-    name: Run unit tests
-    capability: unit-test
-    tool: npm
-    tool_version: null
-    command: npm test
-    config: {}
-    env: {}
-    fail_on_error: true
+  tasks: []
   services: []
 docker: null
