@@ -1,52 +1,50 @@
-name: Node.js CI
+name: ci-cd
 'on':
+  pull_request:
+    branches:
+    - main
   push:
     branches:
     - main
-  pull_request: {}
 permissions:
   contents: read
   packages: write
-  id-token: write
 env:
-  NODE_VERSION: 20.x
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  NODE_VERSION: '20'
 jobs:
-  test-unit-test:
-    name: 'Test: unit-test'
+  validate-lint:
+    name: 'Validate: lint'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
     - name: Checkout
       id: checkout
       uses: actions/checkout@v4
-    - name: Setup Node.js
+    - name: Setup Node
       id: setup-node
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: npm
-    - name: Install dependencies
-      id: install
-      run: npm ci
-    - name: Run unit tests
-      id: test
-      run: npm test
-  deploy:
-    name: Deploy
+    - name: Run lint
+      id: lint
+      run: npm ci && npm run lint
+  test-test-unit-test:
+    name: 'Test: test-unit-test'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: test-unit-test
-    environment: production
+    needs:
+    - validate-lint
     steps:
     - name: Checkout
+      id: checkout
       uses: actions/checkout@v4
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+    - name: Setup Node
+      id: setup-node
+      uses: actions/setup-node@v4
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-        aws-region: us-east-1
-    - name: Deploy
-      run: echo "Deploying to production"
+        node-version: ${{ env.NODE_VERSION }}
+        cache: npm
+    - name: Run unit tests
+      id: run-unit-tests
+      run: npm test
